@@ -7,10 +7,22 @@ import CountryList from './pages/CountryList';
 import CountryDetails from './pages/CountryDetails';
 import Favourite from './pages/Favourite';
 
+import { useRouteError } from 'react-router-dom';
+
+function ErrorBoundary() {
+  const error = useRouteError();
+  console.error('Route error:', error);
+  return (
+    <div className="text-center mt-10 text-red-500">
+      Error: {error?.message || 'Something went wrong'}
+    </div>
+  );
+}
+
 function App() {
   return (
     <Routes>
-      <Route element={<Layout />}>
+      <Route element={<Layout />} errorElement={<ErrorBoundary />}>
         <Route index element={<Home />} />
         <Route path="home" element={<Home />} />
         <Route path="signin" element={<SignIn />} />
@@ -22,6 +34,6 @@ function App() {
       </Route>
     </Routes>
   );
-}
+};
 
 export default App;
