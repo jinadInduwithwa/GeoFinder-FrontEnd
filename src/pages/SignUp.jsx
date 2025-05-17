@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline, IoLogoApple } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for unique user IDs
 import toast, { Toaster } from "react-hot-toast";
 import CustomButton from "../components/UI/CustomButton";
 import SideImage from "../assets/signIn/signIn.jpg";
@@ -111,13 +112,13 @@ function SignUp() {
         return toast.error("Email already exists");
       }
 
-      // Create new user
-      const newUser = { fullName, email, password };
+      // Create new user with unique ID
+      const newUser = { id: uuidv4(), fullName, email, password };
       existingUsers.push(newUser);
       localStorage.setItem('users', JSON.stringify(existingUsers));
 
       // Log in the new user
-      login({ fullName, email });
+      login({ id: newUser.id, fullName, email });
       toast.success("Account created successfully!");
       navigate("/signin");
     } catch (error) {

@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for unique user IDs
 
 export const AuthContext = createContext();
 
@@ -12,7 +13,8 @@ export const AuthProvider = ({ children }) => {
       try {
         const storedUser = localStorage.getItem('user');
         if (storedUser) {
-          setUser(JSON.parse(storedUser));
+          const parsedUser = JSON.parse(storedUser);
+          setUser(parsedUser);
         } else {
           setUser(null);
         }
@@ -28,8 +30,12 @@ export const AuthProvider = ({ children }) => {
 
   // Function to log in and save user to localStorage
   const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem('user', JSON.stringify(userData));
+    const userWithId = {
+      ...userData,
+      id: userData.id || uuidv4(), // Assign a unique ID if not already present
+    };
+    setUser(userWithId);
+    localStorage.setItem('user', JSON.stringify(userWithId));
   };
 
   // Function to log out and clear localStorage
