@@ -2,7 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { IoEyeOutline, IoEyeOffOutline, IoLogoApple } from "react-icons/io5";
 import { FcGoogle } from "react-icons/fc";
-import { v4 as uuidv4 } from 'uuid';
+import { uuidv4 } from 'uuid';
 import toast, { Toaster } from "react-hot-toast";
 import CustomButton from "../components/UI/CustomButton";
 import SideImage from "../assets/signIn/signIn.jpg";
