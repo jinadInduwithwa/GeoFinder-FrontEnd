@@ -1,28 +1,38 @@
-import React, { useEffect } from "react";
-import Marquee from "react-fast-marquee";
-import { motion } from "framer-motion";
-import { useCountryContext } from "../../context/CountryContext";
-import HomeCard from "../UI/HomeCard";
+// AsiaCountrySection.jsx
+import React, { useState, useEffect } from 'react';
+import Marquee from 'react-fast-marquee';
+import { motion } from 'framer-motion';
+import HomeCard from '../UI/HomeCard';
 
 function AsiaCountrySection() {
-  const {
-    countries,
-    loading,
-    error,
-    fetchCountriesByRegion,
-    setSelectedRegion,
-  } = useCountryContext();
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("Fetching Asia countries...");
-    setSelectedRegion("Asia"); // Set region in context
-    fetchCountriesByRegion("Asia", 1, "en"); // Fetch Asia countries
-  }, [fetchCountriesByRegion, setSelectedRegion]);
+    const fetchAsiaCountries = async () => {
+      console.log('Fetching Asia countries...');
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/region/Asia');
+        if (!response.ok) {
+          throw new Error('Failed to fetch Asian countries');
+        }
+        const data = await response.json();
+        console.log('Fetched Asia countries:', data);
+        setCountries(data);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+        setCountries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Log countries for debugging
-  useEffect(() => {
-    console.log("Countries:", countries);
-  }, [countries]);
+    fetchAsiaCountries();
+  }, []);
 
   return (
     <section className="py-8 sm:py-16 w-full bg-gradient-to-b from-gray-50 to-gray-200">

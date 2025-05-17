@@ -1,30 +1,38 @@
-
-
-import React, { useEffect } from "react";
-import Marquee from "react-fast-marquee";
-import { motion } from "framer-motion";
-import { useCountryContext } from "../../context/CountryContext";
-import HomeCard from "../UI/HomeCard";
+// EuropeCountrySection.jsx
+import React, { useState, useEffect } from 'react';
+import Marquee from 'react-fast-marquee';
+import { motion } from 'framer-motion';
+import HomeCard from '../UI/HomeCard';
 
 function EuropeCountrySection() {
-  const {
-    countries,
-    loading,
-    error,
-    fetchCountriesByRegion,
-    setSelectedRegion,
-  } = useCountryContext();
+  const [countries, setCountries] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    console.log("Fetching Americas countries...");
-    setSelectedRegion("Asia"); // Set region in context
-    fetchCountriesByRegion("Asia", 1, "en"); // Fetch Americas countries
-  }, [fetchCountriesByRegion, setSelectedRegion]);
+    const fetchEuropeCountries = async () => {
+      console.log('Fetching Europe countries...');
+      setLoading(true);
+      setError(null);
+      try {
+        const response = await fetch('https://restcountries.com/v3.1/region/Europe');
+        if (!response.ok) {
+          throw new Error('Failed to fetch European countries');
+        }
+        const data = await response.json();
+        console.log('Fetched Europe countries:', data);
+        setCountries(data);
+      } catch (err) {
+        console.error('Fetch error:', err);
+        setError(err.message);
+        setCountries([]);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  // Log countries for debugging
-  useEffect(() => {
-    console.log("Countries:", countries);
-  }, [countries]);
+    fetchEuropeCountries();
+  }, []);
 
   return (
     <section className="py-8 sm:py-16 w-full bg-gradient-to-b from-gray-50 to-gray-200">
@@ -39,7 +47,7 @@ function EuropeCountrySection() {
             Discover Europe Countries
           </h2>
           <p className="text-gray-600 text-center max-w-2xl mx-auto text-sm sm:text-base">
-            Explore the vibrant cultures, capitals, and landscapes of the Europes' top countries
+            Explore the vibrant cultures, capitals, and landscapes of Europe's top countries
           </p>
         </motion.div>
       </div>
