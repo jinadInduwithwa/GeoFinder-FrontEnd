@@ -10,6 +10,7 @@ function HeroSection() {
   const [countries, setCountries] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const isMobile = window.innerWidth < 640;
 
   // Fetch 15 countries for the slider
   useEffect(() => {
@@ -53,6 +54,26 @@ function HeroSection() {
     return () => clearTimeout(timer);
   }, [countries.length]);
 
+  // Auto-slide with optimized transition (skip on mobile)
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowContent(true);
+    }, 300);
+
+    if (!isMobile && countries.length > 0) {
+      const slideInterval = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % countries.length);
+      }, 8000);
+
+      return () => {
+        clearTimeout(timer);
+        clearInterval(slideInterval);
+      };
+    }
+
+    return () => clearTimeout(timer);
+  }, [countries.length, isMobile]);
+
   return (
     <div className="relative min-h-screen w-full flex items-center justify-center overflow-hidden">
       {/* Video Background */}
@@ -84,18 +105,15 @@ function HeroSection() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {/* Left Side: Text Content */}
+           {/* Text Content (Full width on mobile) */}
             <motion.div
-              className="w-full sm:w-1/2 text-left mb-8 sm:mb-0"
+              className="w-full text-center sm:text-left mb-6 sm:mb-0"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
+              transition={{ duration: 0.6 }}
             >
               <motion.h1
-                className="text-2xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
+                className="text-xl sm:text-3xl md:text-5xl font-bold text-white mb-3 sm:mb-5 leading-tight"
               >
                 Welcome to <span className="text-green-500">GeoFinder</span>
                 <br />
@@ -104,55 +122,53 @@ function HeroSection() {
                 One Country at a Time
               </motion.h1>
               <motion.p
-                className="text-base sm:text-lg md:text-xl text-gray-200 mb-6 sm:mb-8 max-w-xs sm:max-w-md md:max-w-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.6 }}
+                className="text-sm sm:text-base md:text-lg text-gray-200 mb-5 sm:mb-6 max-w-[90%] sm:max-w-md mx-auto sm:mx-0"
               >
                 Discover detailed information about countries, regions, and cultures from across the globe.
               </motion.p>
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: 0.9 }}
-              >
-                <Button to="/countries-list" icon={FaArrowRight}>
+              <motion.div>
+                <Button
+                  to="/countries-list"
+                  icon={FaArrowRight}
+                  className="px-3 py-1.5 text-sm sm:px-4 sm:py-2 sm:text-base"
+                >
                   Start Exploring
                 </Button>
               </motion.div>
             </motion.div>
 
-            {/* Right Side: Flag Slider */}
-            <motion.div
-              className="w-full sm:w-1/2 h-40 sm:h-60 md:h-96 relative overflow-hidden rounded-lg"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.4, delay: 0.2 }}
-            >
-              {loading && (
-                <div className="text-center text-white absolute inset-0 flex items-center justify-center">
-                  Loading flags...
-                </div>
-              )}
-              {error && (
-                <div className="text-center text-red-400 absolute inset-0 flex items-center justify-center">
-                  Error: {error}
-                </div>
-              )}
+            {/* Flag Slider (Hidden on mobile) */}
+            {!isMobile && (
+              <motion.div
+                className="hidden sm:block w-full sm:w-1/2 h-32 sm:h-48 md:h-80 relative overflow-hidden rounded-lg"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.4 }}
+              >
+                {loading && (
+                  <div className="text-center text-white absolute inset-0 flex items-center justify-center">
+                    Loading flags...
+                  </div>
+                )}
+                {error && (
+                  <div className="text-center text-red-400 absolute inset-0 flex items-center justify-center">
+                    Error: {error}
+                  </div>
+                )}
               {!loading && !error && countries.length > 0 && (
-                <AnimatePresence mode="wait">
-                  <motion.img
-                    key={currentSlide}
-                    src={countries[currentSlide].flags.png}
-                    alt={countries[currentSlide].name.common}
-                    className="w-full h-full object-contain rounded-lg"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 1 }}
-                  />
-                </AnimatePresence>
-              )}
+                  <AnimatePresence mode="wait">
+                    <motion.img
+                      key={currentSlide}
+                      src={countries[currentSlide].flags.png}
+                      alt={countries[currentSlide].name.common}
+                      className="w-full h-full object-contain rounded-lg"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    />
+                  </AnimatePresence>
+                )}
               {/* Navigation dots */}
               {!loading && !error && countries.length > 0 && (
                 <div className="hidden justify-center mt-2 sm:mt-4 space-x-2 absolute bottom-2 sm:bottom-4 left-0 right-0">
@@ -166,8 +182,9 @@ function HeroSection() {
                     />
                   ))}
                 </div>
-              )}
-            </motion.div>
+             )}
+              </motion.div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
