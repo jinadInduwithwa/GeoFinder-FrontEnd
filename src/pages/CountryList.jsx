@@ -1,3 +1,5 @@
+
+// src/pages/CountryList.jsx
 import React from 'react';
 import { useCountryContext } from '../context/CountryContext';
 import Card from '../components/UI/Card';
@@ -37,6 +39,12 @@ const CountryList = () => {
     error,
     errorType: typeof error,
     errorValue: error,
+    searchQuery,
+    selectedRegion,
+    selectedSubregion,
+    populationRange,
+    currency,
+    timeZone,
   }); // Debug log
 
   const handleNextPage = () => {
@@ -117,6 +125,7 @@ const CountryList = () => {
             onChange={handleSearchChange}
             placeholder="Search by country name..."
             className="p-2 border border-gray-300 rounded-full w-full pl-10"
+            data-testid="search-input"
           />
           <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
         </div>
@@ -124,6 +133,7 @@ const CountryList = () => {
           value={selectedRegion}
           onChange={handleRegionChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="region-select"
         >
           <option value="">All Regions</option>
           <option value="Africa">Africa</option>
@@ -136,6 +146,7 @@ const CountryList = () => {
           value={selectedSubregion || 'All Subregions'}
           onChange={handleSubregionChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="subregion-select"
         >
           {getSubregions().map((subregion) => (
             <option key={subregion} value={subregion}>
@@ -147,6 +158,7 @@ const CountryList = () => {
           value={language}
           onChange={handleLanguageChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="language-select"
         >
           <option value="en">English</option>
           <option value="fr">French</option>
@@ -157,6 +169,7 @@ const CountryList = () => {
           value={populationRange}
           onChange={handlePopulationChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="population-select"
         >
           <option value="">All Populations</option>
           <option value="small">Small ( 1M)</option>
@@ -167,6 +180,7 @@ const CountryList = () => {
           value={currency || 'All Currencies'}
           onChange={handleCurrencyChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="currency-select"
         >
           {getCurrencies().map((curr) => (
             <option key={curr} value={curr}>
@@ -178,6 +192,7 @@ const CountryList = () => {
           value={timeZone || 'All Time Zones'}
           onChange={handleTimeZoneChange}
           className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
+          data-testid="timezone-select"
         >
           {getTimeZones().map((tz) => (
             <option key={tz} value={tz}>
@@ -188,6 +203,7 @@ const CountryList = () => {
         <button
           onClick={handleClearCache}
           className="hover:text-red-600 text-gray-200 py-2 px-4 rounded-full border"
+          data-testid="clear-cache-btn"
         >
           Clear Cache
         </button>
@@ -207,14 +223,18 @@ const CountryList = () => {
             onClick={handlePrevPage}
             disabled={currentPage === 1}
             className="bg-green-300 hover:bg-green-400 text-gray-800 font-bold py-2 px-4 rounded-l disabled:opacity-50"
+            data-testid="prev-page-btn"
           >
             Previous
           </button>
-          <span className="py-2 px-4">Page {currentPage} of {totalPages}</span>
+          <span className="py-2 px-4" data-testid="page-info">
+            Page {currentPage} of {totalPages}
+          </span>
           <button
             onClick={handleNextPage}
             disabled={currentPage === totalPages}
             className="bg-green-300 hover:bg-green-400 text-gray-800 font-bold py-2 px-4 rounded-r disabled:opacity-50"
+            data-testid="next-page-btn"
           >
             Next
           </button>
