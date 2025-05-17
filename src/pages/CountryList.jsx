@@ -109,89 +109,131 @@ const CountryList = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-3xl font-bold text-center mb-6">Countries</h1>
-      <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center items-center flex-wrap">
-        <div className="relative w-full sm:w-1/3">
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={handleSearchChange}
-            placeholder="Search by country name..."
-            className="p-2 border border-gray-300 rounded-full w-full pl-10"
-          />
-          <HiSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+      <div className="space-y-6 mb-6">
+        {/* Top Row */}
+        <div className="flex flex-col sm:flex-row gap-4">
+          {/* Long Search Bar - about 2/3 width */}
+          <div className="flex-1 bg-white rounded-xl  p-4 flex items-center relative">
+            <HiSearch className="absolute  left-8 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={handleSearchChange}
+              placeholder="Search by country name..."
+              className="pl-10 pr-2 py-2 border border-gray-200 rounded-lg w-full focus:outline-none"
+            />
+          </div>
+
+          {/* One Select Box - about 1/3 width */}
+          <div className="sm:w-1/3 bg-white rounded-xl ">
+            <label className="block text-sm text-gray-600 mb-1">Region</label>
+            <select
+              value={selectedRegion}
+              onChange={handleRegionChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              <option value="">All Regions</option>
+              <option value="Africa">Africa</option>
+              <option value="Americas">Americas</option>
+              <option value="Asia">Asia</option>
+              <option value="Europe">Europe</option>
+              <option value="Oceania">Oceania</option>
+            </select>
+          </div>
         </div>
-        <select
-          value={selectedRegion}
-          onChange={handleRegionChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          <option value="">All Regions</option>
-          <option value="Africa">Africa</option>
-          <option value="Americas">Americas</option>
-          <option value="Asia">Asia</option>
-          <option value="Europe">Europe</option>
-          <option value="Oceania">Oceania</option>
-        </select>
-        <select
-          value={selectedSubregion || 'All Subregions'}
-          onChange={handleSubregionChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          {getSubregions().map((subregion) => (
-            <option key={subregion} value={subregion}>
-              {subregion}
-            </option>
-          ))}
-        </select>
-        <select
-          value={language}
-          onChange={handleLanguageChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          <option value="en">English</option>
-          <option value="fr">French</option>
-          <option value="es">Spanish</option>
-          <option value="de">German</option>
-        </select>
-        <select
-          value={populationRange}
-          onChange={handlePopulationChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          <option value="">All Populations</option>
-          <option value="small">Small ( 1M)</option>
-          <option value="medium">Medium (1M - 10M)</option>
-          <option value="large">Large ( 10M)</option>
-        </select>
-        <select
-          value={currency || 'All Currencies'}
-          onChange={handleCurrencyChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          {getCurrencies().map((curr) => (
-            <option key={curr} value={curr}>
-              {curr}
-            </option>
-          ))}
-        </select>
-        <select
-          value={timeZone || 'All Time Zones'}
-          onChange={handleTimeZoneChange}
-          className="p-2 border border-gray-300 rounded-full w-full sm:w-1/5"
-        >
-          {getTimeZones().map((tz) => (
-            <option key={tz} value={tz}>
-              {tz}
-            </option>
-          ))}
-        </select>
-        <button
-          onClick={handleClearCache}
-          className="hover:text-red-600 text-gray-200 py-2 px-4 rounded-full border"
-        >
-          Clear Cache
-        </button>
+
+        {/* Bottom Row */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {/* Subregion */}
+          <div className="bg-white rounded-xl">
+            <label className="block text-sm text-gray-600 mb-1">Subregion</label>
+            <select
+              value={selectedSubregion || 'All Subregions'}
+              onChange={handleSubregionChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              {getSubregions().map((subregion) => (
+                <option key={subregion} value={subregion}>
+                  {subregion}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Language */}
+          <div className="bg-white rounded-xl ">
+            <label className="block text-sm text-gray-600 mb-1">Language</label>
+            <select
+              value={language}
+              onChange={handleLanguageChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              <option value="en">English</option>
+              <option value="fr">French</option>
+              <option value="es">Spanish</option>
+              <option value="de">German</option>
+            </select>
+          </div>
+
+          {/* Population */}
+          <div className="bg-white rounded-xl ">
+            <label className="block text-sm text-gray-600 mb-1">Population</label>
+            <select
+              value={populationRange}
+              onChange={handlePopulationChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              <option value="">All Populations</option>
+              <option value="small">Small (&lt; 1M)</option>
+              <option value="medium">Medium (1M - 10M)</option>
+              <option value="large">Large (&gt; 10M)</option>
+            </select>
+          </div>
+
+          {/* Currency */}
+          <div className="bg-white rounded-xl ">
+            <label className="block text-sm text-gray-600 mb-1">Currency</label>
+            <select
+              value={currency || 'All Currencies'}
+              onChange={handleCurrencyChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              {getCurrencies().map((curr) => (
+                <option key={curr} value={curr}>
+                  {curr}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Time Zone */}
+          <div className="bg-white rounded-xl ">
+            <label className="block text-sm text-gray-600 mb-1">Time Zone</label>
+            <select
+              value={timeZone || 'All Time Zones'}
+              onChange={handleTimeZoneChange}
+              className="w-full p-2 border border-gray-200 rounded-lg"
+            >
+              {getTimeZones().map((tz) => (
+                <option key={tz} value={tz}>
+                  {tz}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Clear Cache Button */}
+          <div className="flex items-end">
+            <button
+              onClick={handleClearCache}
+              className="w-full bg-red-50 text-red-600 py-2 px-4 rounded-lg border hidden border-red-200 hover:bg-red-100 transition"
+            >
+              Clear Cache
+            </button>
+          </div>
+        </div>
       </div>
+
       {countries.length === 0 ? (
         <div className="text-center mt-10">No countries match your filters.</div>
       ) : (
