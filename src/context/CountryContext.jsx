@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { useAuthenticationContext } from './AuthContext';
 
 // Create Context
 const CountryContext = createContext();
@@ -22,6 +23,7 @@ const debounce = (func, wait) => {
 const cache = new Map();
 
 export const CountryProvider = ({ children }) => {
+  const { user } = useAuthenticationContext();
   const [countries, setCountries] = useState([]);
   const [allCountries, setAllCountries] = useState([]); // Store all countries for filtering
   const [favorites, setFavorites] = useState([]);
@@ -38,12 +40,6 @@ export const CountryProvider = ({ children }) => {
   const [currency, setCurrency] = useState('');
   const [timeZone, setTimeZone] = useState('');
 
-  // Mocked user (stored in localStorage)
-  const [user, setUser] = useState(() => {
-    const storedUser = localStorage.getItem('user');
-    return storedUser ? JSON.parse(storedUser) : null;
-  });
-
   // Generate cache key
   const getCacheKey = (endpoint, params) => {
     return `${endpoint}-${JSON.stringify(params)}`;
@@ -55,7 +51,7 @@ export const CountryProvider = ({ children }) => {
     const cached = cache.get(cacheKey);
 
     if (cached && cached.expires > Date.now()) {
-      console.log('Using cached data:', cacheKey); // Debug
+      console.log('Using cached data:', cacheKey);
       return cached.data;
     }
 
@@ -87,23 +83,23 @@ export const CountryProvider = ({ children }) => {
 
   // Fetch favorites from localStorage
   const fetchFavorites = () => {
-    if (!user) {
+    if (!user || !user.email) {
       setFavorites([]);
     } else {
-      const storedFavorites = localStorage.getItem(`favorites_${user.id}`);
+      const storedFavorites = localStorage.getItem(`favorites_${user.email}`);
       setFavorites(storedFavorites ? JSON.parse(storedFavorites) : []);
     }
   };
 
   // Add favorite country
   const addFavoriteCountry = (cca3) => {
-    if (!user) {
+    if (!user || !user.email) {
       toast.error('Please sign in to add favorites');
       return;
     }
     setFavorites((prev) => {
       const newFavorites = [...prev, cca3];
-      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
+      localStorage.setItem(`favorites_${user.email}`, JSON.stringify(newFavorites));
       toast.success('Added to favorites');
       return newFavorites;
     });
@@ -111,13 +107,13 @@ export const CountryProvider = ({ children }) => {
 
   // Remove favorite country
   const removeFavoriteCountry = (cca3) => {
-    if (!user) {
+    if (!user || !user.email) {
       toast.error('Please sign in to remove favorites');
       return;
     }
     setFavorites((prev) => {
       const newFavorites = prev.filter((code) => code !== cca3);
-      localStorage.setItem(`favorites_${user.id}`, JSON.stringify(newFavorites));
+      localStorage.setItem(`favorites_${user.email}`, JSON.stringify(newFavorites));
       toast.success('Removed from favorites');
       return newFavorites;
     });
@@ -185,7 +181,7 @@ export const CountryProvider = ({ children }) => {
     const start = (currentPage - 1) * pageSize;
     const paginatedData = sortedData.slice(start, start + pageSize);
     setCountries(paginatedData);
-    console.log('Filtered Countries:', paginatedData); // Debug
+    console.log('Filtered Countries:', paginatedData);
   };
 
   // Fetch all countries
@@ -287,7 +283,7 @@ export const CountryProvider = ({ children }) => {
     return ['All Time Zones', ...Array.from(timeZones).sort()];
   };
 
-  // Fetch favorites on mount
+  // Fetch favorites when user changes
   useEffect(() => {
     fetchFavorites();
   }, [user]);
