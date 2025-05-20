@@ -96,7 +96,7 @@ GeoFinder/
 
 1. **Navigate to the backend directory:**
    ```
-   cd D:\Y3 S1\Aplication Framework - AF\Assignment 02\af-2-jinadInduwithwa\GeoFinder\backend
+   cd \GeoFinder\backend
    ```
 
 2. **Install dependencies:**
